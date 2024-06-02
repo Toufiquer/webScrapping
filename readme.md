@@ -21,6 +21,10 @@ This project uses puppeteer to capture web pages and convert them to PDF documen
 npm install
 ```
 
+```bash
+yarn add
+```
+
 **Usage:**
 
 1. Run the script: `node index.js`
