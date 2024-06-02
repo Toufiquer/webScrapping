@@ -17,14 +17,29 @@ This project uses puppeteer to capture web pages and convert them to PDF documen
 
 **Installation:**
 
+**Using npm:**
+
 ```bash
 npm install
 ```
 
+**Using yarn:**
+
+```bash
+yarn install
+```
+
 **Build & Run:**
+
+**Using npm:**
 
 1. Build the project: `npm run build`
 2. Run the script: `npm run start`
+
+**Using yarn:**
+
+1. Build the project: `yarn build`
+2. Run the script: `yarn start`
 
 **Usage:**
 
@@ -62,6 +77,7 @@ This project is licensed under the MIT License.
 
 **Additional Information:**
 
+- The `gcp-build` script in the `package.json` is used to install the Chromium dependencies for puppeteer. This is necessary for running puppeteer in a Google Cloud environment.
 - The project uses TypeScript for better code organization and type safety.
 - The `prettier` dependency is used for code formatting.
 
