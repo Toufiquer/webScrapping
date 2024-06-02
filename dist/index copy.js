@@ -10,8 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer_1 = require("puppeteer");
 const readline = require("node:readline/promises");
 const node_process_1 = require("node:process");
-const { load } = require("@pspdfkit/nodejs");
-const imgToPDF = require("image-to-pdf");
 const fs = require("fs");
 const folderName = "./save-pdf";
 const rl = readline.createInterface({ input: node_process_1.stdin, output: node_process_1.stdout });
@@ -39,15 +37,15 @@ const rl = readline.createInterface({ input: node_process_1.stdin, output: node_
     });
     await page.goto(`${url}`);
     const fileName = `${new Date().toISOString()}`.replaceAll("-", "_").replaceAll(".", "_").replaceAll(":", "_");
-    const imagePath = folderName + "/" + fileName;
-    console.log(" imagePath : ", imagePath);
-    await page.screenshot({ path: imagePath + ".png", fullPage: true });
-    // ! Start to convert to pdf
-    const pages = [
-        imagePath + ".png", // path to the image
-        fs.readFileSync(imagePath + ".png"), // Buffer
-    ];
-    imgToPDF(pages, imgToPDF.sizes.A4).pipe(fs.createWriteStream(imagePath + ".pdf"));
+    const imagePath = folderName + "/" + fileName + ".png";
+    await page.screenshot({ path: imagePath, fullPage: true });
+    await page.emulateMediaType("screen");
+    const pdf = await page.pdf({
+        path: "result.pdf",
+        margin: { top: "100px", right: "50px", bottom: "100px", left: "50px" },
+        printBackground: true,
+        format: "A4",
+    });
     await browser.close();
     rl.close();
 })();

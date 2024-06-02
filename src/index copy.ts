@@ -8,8 +8,6 @@
 import puppeteer from "puppeteer";
 import * as readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-const { load } = require("@pspdfkit/nodejs");
-const imgToPDF = require("image-to-pdf");
 
 const fs = require("fs");
 
@@ -41,17 +39,17 @@ const rl = readline.createInterface({ input, output });
   await page.goto(`${url}`);
 
   const fileName = `${new Date().toISOString()}`.replaceAll("-", "_").replaceAll(".", "_").replaceAll(":", "_");
-  const imagePath = folderName + "/" + fileName;
-  console.log(" imagePath : ", imagePath);
-  await page.screenshot({ path: imagePath + ".png", fullPage: true });
+  const imagePath = folderName + "/" + fileName + ".png";
+  await page.screenshot({ path: imagePath, fullPage: true });
 
-  // ! Start to convert to pdf
-  const pages = [
-    imagePath + ".png", // path to the image
-    fs.readFileSync(imagePath + ".png"), // Buffer
-  ];
+  await page.emulateMediaType("screen");
 
-  imgToPDF(pages, imgToPDF.sizes.A4).pipe(fs.createWriteStream(imagePath + ".pdf"));
+  const pdf = await page.pdf({
+    path: "result.pdf",
+    margin: { top: "100px", right: "50px", bottom: "100px", left: "50px" },
+    printBackground: true,
+    format: "A4",
+  });
 
   await browser.close();
 
