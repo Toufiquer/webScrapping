@@ -21,15 +21,16 @@ This project uses puppeteer to capture web pages and convert them to PDF documen
 npm install
 ```
 
-```bash
-yarn add
-```
+**Build & Run:**
+
+1. Build the project: `npm run build`
+2. Run the script: `npm run start`
 
 **Usage:**
 
-1. Run the script: `node index.js`
-2. Enter the URL you want to capture.
-3. Enter the maximum number of files to save.
+1. After running the script, you will be prompted to enter the following:
+   - **URL:** The website you want to capture.
+   - **Max number of files to save:** The maximum number of PDFs to generate.
 
 **Note:**
 
@@ -58,3 +59,10 @@ Contributions are welcome! Please open an issue or submit a pull request.
 **License:**
 
 This project is licensed under the MIT License.
+
+**Additional Information:**
+
+- The project uses TypeScript for better code organization and type safety.
+- The `prettier` dependency is used for code formatting.
+
+This readme provides a comprehensive overview of your project, addressing the code structure, usage, and contribution guidelines. You can further enhance it by adding more specific details about the implementation, potential use cases, and limitations.
