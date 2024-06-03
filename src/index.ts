@@ -17,11 +17,11 @@ const folderName = "./save-pdf";
 
 const rl = readline.createInterface({ input, output });
 
-const minute = 10;
 const runApp = () => {
   (async () => {
     const url = await rl.question("Enter url\t");
     const count = await rl.question("Max number of files to save\t");
+    const delayBetweenScreenshots = await rl.question("Delay between screenshots (in seconds)\t");
 
     const getAndSavePdf = async () => {
       try {
@@ -40,44 +40,45 @@ const runApp = () => {
         hasTouch: false,
         isMobile: false,
       });
-      await page.goto(`${url}`);
+      await page.goto(`${url}`, { waitUntil: "domcontentloaded" });
+      // await page.
 
-      const fileName = `${new Date().toISOString()}`.replaceAll("-", "_").replaceAll(".", "_").replaceAll(":", "_");
-      const imagePath = folderName + fileName + ".png";
-      const pdfPath = folderName + "/" + fileName + ".pdf";
-      try {
-        await page.screenshot({ path: imagePath, fullPage: true });
-      } catch (err) {
-        console.error("Error save image:", err);
-      }
+      for (let i = 0; i < parseInt(count); i++) {
+        const fileName = `${new Date().toISOString()}`.replaceAll("-", "_").replaceAll(".", "_").replaceAll(":", "_");
+        const imagePath = folderName + "/" + fileName + ".png";
+        const pdfPath = folderName + "/" + fileName + ".pdf";
 
-      // ! Start to convert to pdf
-      const pages = [
-        imagePath, // path to the image
-        fs.readFileSync(imagePath), // Buffer
-      ];
-
-      try {
-        imgToPDF(pages, imgToPDF.sizes.A4).pipe(fs.createWriteStream(pdfPath));
-      } catch (err) {
-        console.error("Error save pdf :", err);
-      }
-
-      // Delete the image after successful PDF creation (using callback)
-      fs.unlink(imagePath, (err) => {
-        if (err) {
-          console.error("Error deleting image:", err);
+        try {
+          await page.screenshot({ path: imagePath, fullPage: true, captureBeyondViewport: true });
+        } catch (err) {
+          console.error("Error saving image:", err);
         }
-      });
 
-      console.log(`please wait ${minute} minute`);
+        // ! Convert to pdf
+        const pages = [imagePath];
+        try {
+          imgToPDF(pages, imgToPDF.sizes.A4).pipe(fs.createWriteStream(pdfPath));
+        } catch (err) {
+          console.error("Error saving pdf :", err);
+        }
+
+        /* Delete the image after successful PDF creation */
+
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error("Error deleting image:", err);
+          }
+        });
+
+        // Add a delay to allow the website to change
+        await new Promise((resolve) => setTimeout(resolve, parseInt(delayBetweenScreenshots) * 1000));
+      }
+
       await browser.close();
     };
 
-    for (let i = 0; i < parseInt(count); i++) {
-      setTimeout(() => getAndSavePdf(), 1000 * 60 * minute * i);
-    }
-
+    getAndSavePdf();
+    console.log("Success done the work");
     rl.close();
   })();
 };
